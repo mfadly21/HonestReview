@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HonestReview — Ulasan Yang Tidak Bisa Dimanipulasi</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- PARTICLE CANVAS -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- NAVBAR -->
+<nav id="main-nav">
+  <a class="logo" href="#" onclick="showSection('home')">
+    <div class="logo-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+      </svg>
+    </div>
+    Honest<span>Review</span>
+  </a>
+
+  <div class="nav-pills">
+    <button class="nav-pill active" data-section="home" onclick="showSection('home', this)">Beranda</button>
+    <button class="nav-pill" data-section="browse" onclick="showSection('browse', this)">Cari Bisnis</button>
+    <button class="nav-pill" data-section="write" onclick="showSection('write', this)">Tulis Ulasan</button>
+    <button class="nav-pill" data-section="explorer" onclick="showSection('explorer', this)">Blockchain</button>
+    <button class="nav-pill" data-section="dashboard" onclick="showSection('dashboard', this)">Dashboard Pro</button>
+  </div>
+
+  <div class="nav-right">
+    <div class="live-indicator">
+      <div class="live-dot"></div>
+      <span id="live-block-nav">Block #847,291</span>
+    </div>
+    <div id="wallet-status" class="wallet-addr">Not connected</div>
+    <button class="btn-connect" id="connect-btn" onclick="connectWallet()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Hubungkan Wallet
+    </button>
+  </div>
+
+  <!-- Mobile hamburger -->
+  <button class="hamburger" onclick="toggleMobileMenu()" id="hamburger-btn">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Nav Drawer -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <button class="nav-pill-mobile" onclick="showSection('home', null); closeMobileMenu()">🏠 Beranda</button>
+  <button class="nav-pill-mobile" onclick="showSection('browse', null); closeMobileMenu()">🔍 Cari Bisnis</button>
+  <button class="nav-pill-mobile" onclick="showSection('write', null); closeMobileMenu()">✍️ Tulis Ulasan</button>
+  <button class="nav-pill-mobile" onclick="showSection('explorer', null); closeMobileMenu()">⛓️ Blockchain</button>
+  <button class="nav-pill-mobile" onclick="showSection('dashboard', null); closeMobileMenu()">📊 Dashboard Pro</button>
+</div>
+
+<!-- ===== HOME ===== -->
+<section id="section-home" class="active">
+  <div class="hero">
+
+    <!-- Floating orbs bg -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-badge fade-up">
+      <div class="pulse-dot"></div>
+      🔗 Powered by Blockchain + IPFS + AI
+    </div>
+
+    <h1 class="fade-up fade-up-d1">
+      Ulasan yang <em>tidak bisa</em><br>dimanipulasi
+    </h1>
+
+    <p class="hero-sub fade-up fade-up-d2">
+      Setiap ulasan dikunci di blockchain dan disimpan di IPFS — permanen, transparan, dan bebas dari tangan buzzer bayaran.
+    </p>
+
+    <div class="hero-ctas fade-up fade-up-d3">
+      <button class="btn-primary" onclick="showSection('browse', document.querySelectorAll('.nav-pill')[1])">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Cari Bisnis
+      </button>
+      <button class="btn-secondary" onclick="showSection('write', document.querySelectorAll('.nav-pill')[2])">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        Tulis Ulasan
+      </button>
+    </div>
+
+    <div class="stats-bar fade-up fade-up-d4">
+      <div class="stat-item">
+        <span class="stat-num" id="count-reviews">0</span>
+        <span class="stat-label">Ulasan Terverifikasi</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="count-biz">0</span>
+        <span class="stat-label">Bisnis Terdaftar</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="count-blocks">0</span>
+        <span class="stat-label">Blok Di-mining</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" style="color: var(--green)">0%</span>
+        <span class="stat-label">Ulasan Bisa Dihapus</span>
+      </div>
+    </div>
+
+    <div class="tech-flow fade-up" style="animation-delay: 0.5s; opacity: 0;">
+      <div class="tech-chip"><span class="dot dot-purple"></span>Pengguna</div>
+      <span class="arrow-chip">→</span>
+      <div class="tech-chip"><span class="dot dot-green"></span>IPFS Storage</div>
+      <span class="arrow-chip">→</span>
+      <div class="tech-chip"><span class="dot dot-amber"></span>Smart Contract</div>
+      <span class="arrow-chip">→</span>
+      <div class="tech-chip"><span class="dot dot-teal"></span>Blockchain Tetap</div>
+    </div>
+
+    <!-- Feature highlights strip -->
+    <div class="feature-strip fade-up" style="animation-delay: 0.7s; opacity: 0;">
+      <div class="feature-item">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-text">
+          <strong>Immutable</strong>
+          <span>Tidak bisa dihapus siapapun</span>
+        </div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">🌐</div>
+        <div class="feature-text">
+          <strong>Desentralisasi</strong>
+          <span>Data di IPFS, bukan server tunggal</span>
+        </div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">🤖</div>
+        <div class="feature-text">
+          <strong>AI Powered</strong>
+          <span>Analisis sentimen real-time</span>
+        </div>
+      </div>
+      <div class="feature-divider"></div>
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-text">
+          <strong>Real-time</strong>
+          <span>Block mining setiap 8 detik</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== BROWSE ===== -->
+<section id="section-browse">
+  <div class="container">
+    <div class="page-header">
+      <h2>Cari Bisnis</h2>
+      <p>Semua ulasan telah diverifikasi on-chain. Tidak ada yang bisa membayar untuk menghapusnya.</p>
+    </div>
+
+    <div class="search-area">
+      <div class="search-wrap">
+        <svg class="search-icon-inp" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input" placeholder="Cari nama bisnis, kategori, atau lokasi..." id="search-input" oninput="filterBusiness()">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">✕</button>
+      </div>
+      <select class="search-sort" id="sort-select" onchange="filterBusiness()">
+        <option value="default">Urutkan: Default</option>
+        <option value="rating-high">Rating Tertinggi</option>
+        <option value="rating-low">Rating Terendah</option>
+        <option value="reviews-most">Ulasan Terbanyak</option>
+        <option value="sentiment-best">Sentimen Terbaik</option>
+      </select>
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-pill active" onclick="setFilter('semua', this)">Semua Kategori</button>
+      <button class="filter-pill" onclick="setFilter('Kuliner', this)">🍜 Kuliner</button>
+      <button class="filter-pill" onclick="setFilter('Elektronik', this)">📱 Elektronik</button>
+      <button class="filter-pill" onclick="setFilter('Kecantikan', this)">💄 Kecantikan</button>
+      <button class="filter-pill" onclick="setFilter('Jasa', this)">🔧 Jasa</button>
+      <button class="filter-pill" onclick="setFilter('Properti', this)">🏠 Properti</button>
+    </div>
+
+    <div class="results-info" id="results-info"></div>
+    <div class="business-grid" id="business-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none">
+      <div class="empty-icon">🔍</div>
+      <h3>Bisnis tidak ditemukan</h3>
+      <p>Coba kata kunci atau kategori yang berbeda</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WRITE REVIEW ===== -->
+<section id="section-write">
+  <div class="container">
+    <div class="page-header">
+      <h2>Tulis Ulasan Jujur</h2>
+      <p>Ulasanmu akan disimpan permanen di IPFS dan dikunci di blockchain — tidak ada yang bisa menghapusnya.</p>
+    </div>
+
+    <div class="write-layout">
+      <div class="write-main">
+        <div class="progress-steps" id="progress-steps">
+          <div class="step active" id="step1"><span class="step-icon">📝</span><span class="step-txt">Isi Ulasan</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step2"><span class="step-icon">🌐</span><span class="step-txt">Upload IPFS</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step3"><span class="step-icon">⛓️</span><span class="step-txt">Smart Contract</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step4"><span class="step-icon">✅</span><span class="step-txt">Dikonfirmasi</span></div>
+        </div>
+
+        <div class="review-form">
+          <div class="form-section">
+            <label class="form-label">Pilih Bisnis</label>
+            <select class="form-select" id="biz-select" onchange="onBizSelectChange()">
+              <option value="">-- Pilih Bisnis --</option>
+            </select>
+          </div>
+
+          <!-- Business Preview Card -->
+          <div class="biz-preview-card" id="biz-preview" style="display:none"></div>
+
+          <div class="form-section">
+            <label class="form-label">Rating Bintang</label>
+            <div class="star-rating-wrap">
+              <div class="star-rating-input" id="star-input">
+                <button class="star-btn" data-val="1">★</button>
+                <button class="star-btn" data-val="2">★</button>
+                <button class="star-btn" data-val="3">★</button>
+                <button class="star-btn" data-val="4">★</button>
+                <button class="star-btn" data-val="5">★</button>
+              </div>
+              <span class="rating-label-text" id="rating-label-text">Pilih rating</span>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Judul Ulasan</label>
+            <input type="text" class="form-input" id="review-title" placeholder="Ringkasan pengalamanmu..." maxlength="80" oninput="updateCharCount(this, 80, 'title-count')">
+            <div class="char-count" id="title-count">0/80</div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Isi Ulasan Lengkap</label>
+            <textarea class="form-textarea" id="review-body" placeholder="Ceritakan pengalamanmu secara detail. Ulasan jujurmu membantu konsumen lain membuat keputusan yang tepat..." maxlength="1000" oninput="generateTxPreview(); updateCharCount(this, 1000, 'body-count')"></textarea>
+            <div class="char-count" id="body-count">0/1000</div>
+
+            <!-- Live sentiment preview -->
+            <div class="live-sentiment" id="live-sentiment" style="display:none">
+              <span class="sentiment-icon" id="sentiment-icon">😐</span>
+              <span class="sentiment-txt" id="sentiment-txt">Sentimen: Netral</span>
+              <div class="sentiment-meter">
+                <div class="sentiment-fill" id="sentiment-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Nama Pengguna (Alias)</label>
+            <input type="text" class="form-input" id="review-author" placeholder="Nama samaran (privasi terjaga)..." maxlength="30">
+          </div>
+
+          <div class="form-section">
+            <label class="form-label">Upload Bukti Foto <span style="color: var(--text3); font-weight: 400;">(Opsional)</span></label>
+            <div class="upload-zone" id="upload-zone" onclick="document.getElementById('photo-upload').click()" ondragover="event.preventDefault(); this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleFileDrop(event)">
+              <input type="file" id="photo-upload" accept="image/*" multiple style="display:none" onchange="handleFileSelect(this)">
+              <div class="upload-placeholder" id="upload-placeholder">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">Drag & drop foto atau klik untuk memilih</div>
+                <div class="upload-hint">Maks 3 foto, JPG/PNG (bukti untuk ulasanmu)</div>
+              </div>
+              <div class="upload-preview" id="upload-preview"></div>
+            </div>
+          </div>
+
+          <div class="tx-preview" id="tx-preview">
+            <div class="tx-header">
+              <span class="tx-title">📡 Transaction Preview</span>
+              <span class="tx-network">Ethereum Testnet</span>
+            </div>
+            <div class="tx-line"><span class="tx-key">tx_type</span><span class="tx-val-amber">"IPFS_REVIEW_COMMIT"</span></div>
+            <div class="tx-line"><span class="tx-key">ipfs_cid</span><span class="tx-val-teal" id="tx-cid">Qm...</span></div>
+            <div class="tx-line"><span class="tx-key">content_hash</span><span class="tx-val-green" id="tx-hash">0x...</span></div>
+            <div class="tx-line"><span class="tx-key">timestamp</span><span id="tx-ts" style="color: var(--text2);"></span></div>
+            <div class="tx-line"><span class="tx-key">immutable</span><span class="tx-val-amber">true</span></div>
+            <div class="tx-line"><span class="tx-key">gas_estimate</span><span class="tx-val-teal">~21,000 gwei</span></div>
+            <div class="tx-line"><span class="tx-key">network_fee</span><span class="tx-val-green" id="tx-fee">$0.003</span></div>
+          </div>
+
+          <div class="submit-area" style="margin-top: 1.5rem;">
+            <button class="btn-submit" id="submit-btn" onclick="submitReview()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Publikasi ke Blockchain
+            </button>
+            <div class="submit-note">
+              🔒 Setelah dipublikasikan, ulasan bersifat <strong>permanen</strong><br>
+              dan tidak dapat diedit atau dihapus oleh siapapun.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar tips -->
+      <div class="write-sidebar">
+        <div class="tip-card">
+          <div class="tip-title">💡 Tips Ulasan Jujur</div>
+          <ul class="tip-list">
+            <li>Ceritakan pengalaman spesifik yang kamu alami</li>
+            <li>Sebutkan tanggal / waktu kunjungan jika relevan</li>
+            <li>Hindari kata-kata yang menyerang pribadi</li>
+            <li>Upload foto sebagai bukti nyata</li>
+            <li>Sertakan saran membangun untuk bisnis</li>
+          </ul>
+        </div>
+
+        <div class="tip-card tip-card-chain">
+          <div class="tip-title">⛓️ Mengapa Blockchain?</div>
+          <div class="tip-text">Ulasanmu akan disimpan dalam jaringan desentralisasi. Bahkan admin HonestReview pun tidak bisa menghapusnya. Data kamu, selamanya.</div>
+        </div>
+
+        <div class="recent-sidebar">
+          <div class="tip-title">🕐 Ulasan Terbaru</div>
+          <div id="write-recent-reviews"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXPLORER ===== -->
+<section id="section-explorer">
+  <div class="container">
+    <div class="page-header">
+      <h2>Blockchain Explorer</h2>
+      <p>Lihat semua transaksi ulasan yang dikunci on-chain secara real-time.</p>
+    </div>
+
+    <div class="explorer-header">
+      <div class="explorer-icon">⛓️</div>
+      <div class="explorer-info">
+        <h3>HonestReview Smart Contract</h3>
+        <p class="contract-addr">0x7f3a9b2c1d4e8f6a0b5c9d2e7f3a9b2c1d4e8f6a</p>
+        <p style="font-size: 0.8rem; color: var(--text3);">Ethereum Testnet · Solidity ^0.8.19</p>
+      </div>
+      <div style="margin-left: auto; text-align: right;">
+        <div class="live-badge">● LIVE</div>
+        <div style="font-size: 0.8rem; color: var(--text3); margin-top: 4px;" id="block-height-display">Block #0</div>
+        <div style="font-size: 0.75rem; color: var(--text3);" id="tps-display">~12 TPS</div>
+      </div>
+    </div>
+
+    <!-- Network stats row -->
+    <div class="network-stats-row">
+      <div class="net-stat">
+        <span class="net-stat-label">Gas Price</span>
+        <span class="net-stat-val" id="gas-price">18 Gwei</span>
+      </div>
+      <div class="net-stat">
+        <span class="net-stat-label">Avg Block Time</span>
+        <span class="net-stat-val">8.2s</span>
+      </div>
+      <div class="net-stat">
+        <span class="net-stat-label">Total Tx</span>
+        <span class="net-stat-val" id="total-tx-display">0</span>
+      </div>
+      <div class="net-stat">
+        <span class="net-stat-label">Contract Size</span>
+        <span class="net-stat-val">42.3 KB</span>
+      </div>
+      <div class="net-stat">
+        <span class="net-stat-label">Verified</span>
+        <span class="net-stat-val" style="color: var(--green)">✓ Yes</span>
+      </div>
+    </div>
+
+    <!-- Live chain visual -->
+    <div class="chart-card" style="margin-bottom: 1.5rem;">
+      <div class="card-title">Rantai Blok Aktif (Real-time)</div>
+      <div class="chain-visual" id="chain-visual"></div>
+    </div>
+
+    <!-- Search tx -->
+    <div class="tx-search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Cari hash transaksi atau nomor blok..." id="tx-search-input" oninput="filterBlocks()">
+    </div>
+
+    <div class="block-list" id="block-list"></div>
+  </div>
+</section>
+
+<!-- ===== DASHBOARD ===== -->
+<section id="section-dashboard">
+  <div class="container">
+    <div class="dash-top-bar">
+      <div class="page-header" style="margin: 0;">
+        <h2>Dashboard Pro Bisnis</h2>
+        <p>Analisis sentimen AI dari ulasan blockchain kamu.</p>
+      </div>
+      <div class="dash-top-right">
+        <select class="dash-biz-filter" id="dash-biz-filter" onchange="updateDashboard()">
+          <option value="all">Semua Bisnis</option>
+        </select>
+        <select class="dash-biz-filter" id="dash-period">
+          <option value="7">7 Hari Terakhir</option>
+          <option value="30" selected>30 Hari Terakhir</option>
+          <option value="90">90 Hari Terakhir</option>
+        </select>
+        <div class="pro-badge" style="font-size: 0.8rem; padding: 6px 16px;">✨ PRO PLAN</div>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <div class="metric-card">
+        <div class="metric-icon-wrap" style="background: rgba(245,158,11,0.12)">⭐</div>
+        <span class="metric-val" id="dash-rating">4.3</span>
+        <span class="metric-label">Rating Rata-rata</span>
+        <div class="metric-change up">↑ +0.2 bulan ini</div>
+        <div class="metric-sparkline" id="sparkline-rating"></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon-wrap" style="background: rgba(108,99,255,0.12)">📝</div>
+        <span class="metric-val" id="dash-total">0</span>
+        <span class="metric-label">Total Ulasan</span>
+        <div class="metric-change up">↑ +12 minggu ini</div>
+        <div class="metric-sparkline" id="sparkline-reviews"></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon-wrap" style="background: rgba(34,197,94,0.12)">😊</div>
+        <span class="metric-val" id="dash-positive">72%</span>
+        <span class="metric-label">Sentimen Positif</span>
+        <div class="metric-change up">↑ +5% bulan ini</div>
+        <div class="metric-sparkline" id="sparkline-sentiment"></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-icon-wrap" style="background: rgba(20,184,166,0.12)">⛓️</div>
+        <span class="metric-val" id="dash-blocks">0</span>
+        <span class="metric-label">Blok Terverifikasi</span>
+        <div class="metric-change" style="color: var(--teal);">● Real-time</div>
+        <div class="metric-sparkline" id="sparkline-blocks"></div>
+      </div>
+    </div>
+
+    <!-- Trend chart (line graph) -->
+    <div class="chart-card" style="margin-bottom: 1.5rem;">
+      <div class="card-title">
+        Tren Ulasan & Rating
+        <div style="display: flex; gap: 8px;">
+          <button class="chart-tab active" onclick="setChartTab('reviews', this)">Ulasan</button>
+          <button class="chart-tab" onclick="setChartTab('rating', this)">Rating</button>
+          <span class="pro-badge">PRO</span>
+        </div>
+      </div>
+      <canvas id="trend-chart" height="180"></canvas>
+    </div>
+
+    <div class="dash-two-col">
+      <!-- Sentiment donut -->
+      <div class="chart-card">
+        <div class="card-title">
+          Distribusi Sentimen
+          <span class="pro-badge">AI</span>
+        </div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="52" fill="none" stroke="#1e1e28" stroke-width="24"/>
+            <circle id="d-pos" cx="70" cy="70" r="52" fill="none" stroke="#22c55e" stroke-width="24"
+              stroke-dasharray="0 327" stroke-dashoffset="82" style="transition: stroke-dasharray 1.2s ease; transform: rotate(-90deg); transform-origin: 70px 70px;"/>
+            <circle id="d-neu" cx="70" cy="70" r="52" fill="none" stroke="#f59e0b" stroke-width="24"
+              stroke-dasharray="0 327" stroke-dashoffset="82" style="transition: stroke-dasharray 1.2s ease; transform: rotate(-90deg); transform-origin: 70px 70px;"/>
+            <circle id="d-neg" cx="70" cy="70" r="52" fill="none" stroke="#ef4444" stroke-width="24"
+              stroke-dasharray="0 327" stroke-dashoffset="82" style="transition: stroke-dasharray 1.2s ease; transform: rotate(-90deg); transform-origin: 70px 70px;"/>
+            <text x="70" y="65" text-anchor="middle" fill="#f0f0f5" font-size="22" font-weight="700" font-family="JetBrains Mono">72%</text>
+            <text x="70" y="82" text-anchor="middle" fill="#9898a8" font-size="11" font-family="Space Grotesk">Positif</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--green)"></div>
+              <div>
+                <div style="font-weight: 600; font-size: 0.85rem;">Positif</div>
+                <div style="color: var(--text3); font-size: 0.75rem;">72% · 42 ulasan</div>
+              </div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--amber)"></div>
+              <div>
+                <div style="font-weight: 600; font-size: 0.85rem;">Netral</div>
+                <div style="color: var(--text3); font-size: 0.75rem;">18% · 11 ulasan</div>
+              </div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot" style="background: var(--red)"></div>
+              <div>
+                <div style="font-weight: 600; font-size: 0.85rem;">Negatif</div>
+                <div style="color: var(--text3); font-size: 0.75rem;">10% · 6 ulasan</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rating distribution -->
+      <div class="chart-card">
+        <div class="card-title">Distribusi Bintang</div>
+        <div class="bar-chart" id="rating-bars"></div>
+        <div class="nps-score">
+          <span class="nps-label">NPS Score</span>
+          <span class="nps-val">62</span>
+          <span class="nps-tag excellent">Excellent</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Analysis (Claude-powered) -->
+    <div class="chart-card" style="margin-bottom: 1.5rem;">
+      <div class="card-title">
+        Ringkasan AI
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button class="refresh-ai-btn" onclick="refreshAI()" id="refresh-ai-btn">🔄 Refresh</button>
+          <span class="pro-badge">Claude AI</span>
+        </div>
+      </div>
+      <div class="ai-analysis" id="ai-analysis-card">
+        <div class="ai-header">
+          <span>🤖</span>
+          <span>Analisis Sentimen Real-time</span>
+          <div class="ai-loading-dots" id="ai-dots" style="display:none">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="ai-text" id="ai-analysis-text">Menganalisis ulasan dari blockchain...</div>
+      </div>
+    </div>
+
+    <!-- Top keywords cloud -->
+    <div class="chart-card" style="margin-bottom: 1.5rem;">
+      <div class="card-title">
+        Kata Kunci Paling Sering Muncul
+        <span class="pro-badge">PRO</span>
+      </div>
+      <div id="keyword-cloud" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px;"></div>
+    </div>
+
+    <!-- Export section -->
+    <div class="chart-card export-card">
+      <div class="card-title">Export Data</div>
+      <div class="export-buttons">
+        <button class="export-btn" onclick="exportData('csv')">
+          <span>📊</span> Export CSV
+        </button>
+        <button class="export-btn" onclick="exportData('json')">
+          <span>📄</span> Export JSON
+        </button>
+        <button class="export-btn" onclick="exportData('pdf')">
+          <span>📑</span> Export Report PDF
+        </button>
+        <button class="export-btn export-btn-share" onclick="shareReport()">
+          <span>🔗</span> Bagikan Laporan
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REVIEW DETAIL MODAL ===== -->
+<div class="modal-overlay" id="review-modal" onclick="if(event.target===this) closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-biz-info">
+        <div class="modal-biz-avatar" id="modal-biz-avatar"></div>
+        <div>
+          <h3 id="modal-biz-name" style="font-size: 1.1rem; font-weight: 600;"></h3>
+          <p id="modal-biz-cat" style="font-size: 0.8rem; color: var(--text3); margin-top: 2px;"></p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-rating-summary" id="modal-rating-summary"></div>
+    <div class="modal-body">
+      <div class="modal-filter-row">
+        <button class="modal-filter-btn active" onclick="setModalFilter('all', this)">Semua</button>
+        <button class="modal-filter-btn" onclick="setModalFilter('positive', this)">😊 Positif</button>
+        <button class="modal-filter-btn" onclick="setModalFilter('neutral', this)">😐 Netral</button>
+        <button class="modal-filter-btn" onclick="setModalFilter('negative', this)">😞 Negatif</button>
+      </div>
+      <div id="modal-reviews-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toast-icon">✅</span>
+  <span id="toast-msg">Berhasil!</span>
+</div>
+
+<!-- Scroll to top button -->
+<button class="scroll-top-btn" id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<script src="script.js"></script>
+</body>
+</html>
